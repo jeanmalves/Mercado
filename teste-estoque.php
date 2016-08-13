@@ -12,11 +12,24 @@ $prod1->setNome("Macarrão Dona Helena");
 $prod1->setPrecoUnitario(7.40);
 $prod1->setQuantidadeEstoque(10);
 
-echo '<pre>';var_dump($prod1);
+//echo '<pre>';var_dump($prod1);
 
-$estoque = new Estoque();
+$estoque = Estoque::getinstance();
 $estoque->addEstoque($prod1);
+echo '<pre>'; var_dump($estoque->procuraProduto('123123'));
+//echo '<pre>';var_dump($estoque);
+try{
+    $estoque->removeEstoque($prod1, 2);
+    $estoque->removeEstoque($prod1, 20);
+    echo '<pre>';var_dump($estoque);
+} catch (Exception $ex) {
+    echo "Ocorreum problema: ". $ex->getMessage();
+}
 
-echo '<pre>';var_dump($estoque);
+$prod2  = new Produto();
+$prod2->setCodigo('123123');
+$prod2->setQuantidadeEstoque(1);
 
 $estoque->totalDisponivel();
+
+echo '<pre>';var_dump($estoque);

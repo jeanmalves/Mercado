@@ -10,9 +10,9 @@ namespace Elaborata\Mercado\Produtos;
 class Produto
 {
     private $codigo;
-    private $nome;
-    private $precoUnitario;
-    private $quantidadeEstoque;
+    private $nome = '';
+    private $precoUnitario = 0;
+    private $quantidadeEstoque = 0;
     private $desconto = 0;
     
     public function getCodigo()
