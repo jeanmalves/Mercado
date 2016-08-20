@@ -3,9 +3,9 @@
 namespace Elaborata\Mercado\Produtos;
 
 /**
- * Description of Produto
+ * class Entity
  *
- * @author aluno
+ * para Datamapper
  */
 class Produto
 {

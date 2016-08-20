@@ -2,6 +2,10 @@
 
 require_once './Produtos/Produto.php';
 require_once './Produtos/Estoque.php';
+require_once './DB/Table.php';
+require_once './DB/ProdutosTable.php';
+
+require_once './vendor/autoload.php';
 
 use Elaborata\Mercado\Produtos\Produto;
 use Elaborata\Mercado\Produtos\Estoque;
