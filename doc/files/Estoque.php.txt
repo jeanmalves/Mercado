@@ -1,0 +1,101 @@
+<?php
+
+namespace Elaborata\Mercado\Produtos;
+
+use Elaborata\Mercado\Produtos\Produto;
+use Elaborata\Mercado\DB\ProdutosTable;
+
+/**
+ * Usa Singleton
+ */
+class Estoque 
+{
+    static private $instance = null;
+    private $produtos;
+    
+    private function __construct() 
+    {
+        $dsn = 'mysql:dbname=PHPII;host=127.0.0.1';
+        $user = 'root';
+        $password = 'elaborata';    
+            
+        $pdo = new \PDO($dsn, $user, $password);
+        $this->produtos = new ProdutosTable($pdo);
+    }
+
+    static public function getinstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function totalDisponivel()
+    {    
+        echo count($this->produtos);
+    }
+    /**
+     * Adiciona o produto no gerenciador do estoque
+     * @param Produto $produto
+     * @return Estoque
+     */
+    public function addEstoque(Produto $produto)
+    {
+        $prodEstoque = $this->retornaProduto($produto);
+        
+        if ($prodEstoque == null) {
+            $this->produtos->inserir($produto);
+        } else {
+            $nome = ($produto->getNome() != null)? $produto->getNome() : $prodEstoque->getNome();
+            $prodEstoque->setNome($nome);
+            
+            $desconto = ($produto->getDesconto() != null)? $produto->getDesconto() : $prodEstoque->getDesconto();
+            $prodEstoque->setDesconto($desconto);
+            
+            $quant = ($produto->getQuantidadeEstoque() > 0)? $produto->getQuantidadeEstoque() + $prodEstoque->getQuantidadeEstoque() : $prodEstoque->getQuantidadeEstoque(); 
+            $prodEstoque->setQuantidadeEstoque($quant);
+            
+            $precoUnitario = ($produto->getPrecoUnitario() > 0)? $produto->getPrecoUnitario() : $prodEstoque->getPrecoUnitario();
+            $produto->setPrecoUnitario($precoUnitario);
+            
+            $this->produtos->atualizar($prodEstoque);
+        }
+        
+        return $this;
+    }
+    
+    public function removeEstoque(Produto $produto, $quant)
+    {
+        $prodEstoque = $this->retornaProduto($produto);
+        $quantidadeAtual = $prodPesquisa->getQuantidadeEstoque();
+        
+        if (($quantidadeAtual - $quant) < 0) {
+            throw new \Exception("Não existe em estoque a quantidade informada");
+        }
+        
+        $prodEstoque->setQuantidadeEstoque($quantidadeAtual - $quant);
+        
+        $this->produtos->atualizar($prodEstoque);
+        
+        return $this;
+    }
+    
+    public function procuraProduto($codigo)
+    {
+        $result = $this->produtos->buscar($codigo);
+        
+        return ($result != false)? $result : null;
+    }
+    
+    /**
+     * 
+     * @param Produto $produto
+     * @return Produto | null
+     */
+    private function retornaProduto(Produto $produto)
+    {
+        $result = $this->procuraProduto($produto->getCodigo());
+    }
+}
+
